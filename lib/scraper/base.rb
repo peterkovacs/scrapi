@@ -321,6 +321,7 @@ module Scraper
       # * <tt>:redirect_limit</tt> -- Limits number of redirects
       #   to follow.
       # * <tt>:user_agent</tt> -- Value for User-Agent header.
+      # * <tt>:cookie</tt> -- A string that will be added into the request as a cookie.
       # * <tt>:timeout</tt> -- HTTP open connection/read timeouts
       #   (in second).
       #
@@ -684,7 +685,7 @@ module Scraper
 
 
     unless const_defined? :READER_OPTIONS
-      READER_OPTIONS = [:last_modified, :etag, :redirect_limit, :user_agent, :timeout]
+      READER_OPTIONS = [:last_modified, :etag, :redirect_limit, :user_agent, :timeout, :cookie]
     end
 
 

@@ -260,6 +260,10 @@ module HTML #:nodoc:
       return false unless super
       content == node.content
     end
+
+    def text
+      @content
+    end
   end
   
   # A CDATA node is simply a text node with a specialized way of displaying
@@ -510,6 +514,18 @@ module HTML #:nodoc:
       return false unless super
       return false unless closing == node.closing && self.name == node.name
       attributes == node.attributes
+    end
+
+    def text
+      return @content if respond_to? :content
+      
+      data = ""
+      children.each do |child|
+        next if child.respond_to? :name and child.name == "script"
+        data += child.text
+      end
+
+      data
     end
     
     private

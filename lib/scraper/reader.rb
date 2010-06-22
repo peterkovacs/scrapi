@@ -124,16 +124,21 @@ module Scraper
         http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = (uri.scheme == "https")
         http.close_on_empty_response = true
-        http.open_timeout = http.read_timeout = options[:http_timeout] || DEFAULT_TIMEOUT
+        http.open_timeout = http.read_timeout = options[:timeout] || DEFAULT_TIMEOUT
         path = uri.path.dup # required so we don't modify path
         path << "?#{uri.query}" if uri.query
         # TODO: Specify which content types are accepted.
         # TODO: GZip support.
-        headers = {}
-        headers["User-Agent"] = options[:user_agent] if options[:user_agent]
-        headers["Last-Modified"] = options[:last_modified] if options[:last_modified]
-        headers["ETag"] = options[:etag] if options[:etag]
-        response = http.request_get(path, headers)
+        response = nil
+        http.start do |http|
+          request = Net::HTTP::Get.new(path)
+          request.add_field "User-Agent", options[:user_agent] if options[:user_agent]
+          request.add_field "Last-Modified", options[:last_modified] if options[:last_modified]
+          request.add_field "ETag", options[:etag] if options[:etag]
+          request['Cookie'] = options[:cookie] if options[:cookie]
+          response = http.request(request)
+        end
+        response
         # TODO: Ignore content types that do not map to HTML.
       rescue TimeoutError=>error
         raise HTTPTimeoutError.new(error)

@@ -296,7 +296,7 @@ module Scraper
           extracts.each do |extract|
             extract.bind(self).call(element)
           end
-          true
+	  map.keys[ 0 ]
         end
       end
 
@@ -499,6 +499,9 @@ module Scraper
           extractor = selector.pop
         elsif selector.last.is_a?(Hash)
           extractor = extractor(selector.pop)
+	elsif selector.last.is_a?(Symbol)
+	  block_key = selector.pop
+	  attr_accessor block_key
         end
         if block && extractor
           # Ugly, but no other way to chain two calls bound to the
@@ -509,11 +512,20 @@ module Scraper
           extractor2 = instance_method(:__extractor)
           remove_method :__extractor
           extractor = lambda do |element|
-            extractor1.bind(self).call(element)
+            key = extractor1.bind(self).call(element)
             extractor2.bind(self).call(element)
           end
         elsif block
-          extractor = block
+	  if !@arrays.nil? and @arrays.include? block_key.to_sym
+	    extractor = lambda do |element|
+	      send( block_key.to_s + "=", [] ) if send( block_key.to_s ).nil?
+	      send( block_key.to_s + "=", send( block_key.to_s ) + [ block.call(element) ] )
+            end
+          else
+            extractor = lambda do |element|
+              send( block_key.to_s + "=", block.call( element ) )
+            end
+          end
         end
         raise ArgumentError, "Missing extractor: the last argument tells us what to extract" unless extractor
         # And if we think the extractor is the last argument,

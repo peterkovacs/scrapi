@@ -212,7 +212,7 @@ module HTML #:nodoc:
     # content.
     def initialize(parent, line, pos, content)
       super(parent, line, pos)
-      @content = content
+      @content = content.gsub( /<!--.*?-->/mn, '' )
     end
 
     # Returns the content of this node.

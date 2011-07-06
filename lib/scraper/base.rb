@@ -516,7 +516,7 @@ module Scraper
             key = extractor1.bind(self).call(element)
             extractor2.bind(self).call(element)
           end
-        elsif block
+        elsif block && block_key
 	  if !@arrays.nil? and @arrays.include? block_key.to_sym
 	    extractor = lambda do |element|
 	      send( block_key.to_s + "=", [] ) if send( block_key.to_s ).nil?
@@ -527,6 +527,8 @@ module Scraper
               send( block_key.to_s + "=", block.call( element ) )
             end
           end
+	elsif block
+	  extractor = block
         end
         raise ArgumentError, "Missing extractor: the last argument tells us what to extract" unless extractor
         # And if we think the extractor is the last argument,

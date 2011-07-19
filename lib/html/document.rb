@@ -36,7 +36,7 @@ ignoring attempt to close #{node_stack.last.name} with #{node.name}
   text around open: #{text[open_start,40].inspect}
   text around close: #{text[close_start,40].inspect}
 EOF
-              strict ? raise(msg) : warn(msg)
+              raise(msg) if strict
             end
           elsif !node.childless?(xml) && node.closing != :close
             node_stack.push node

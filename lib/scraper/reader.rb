@@ -72,7 +72,13 @@ module Scraper
         :wrap_sections=>false,
         :force_output=>true,
         :quiet=>true,
-        :tidy_mark=>false
+        :tidy_mark=>false,
+        :drop_proprietary_attributes => false,
+        :merge_divs => false,
+        :merge_spans => false,
+        :new_inline_tags => [ 'time' ],
+        :new_empty_tags => [ 'span' ],
+        :new_blocklevel_tags => [ 'span' ]
       }
     end
 
@@ -175,7 +181,7 @@ module Scraper
       when Net::HTTPRequestTimeOut
         raise HTTPTimeoutError
       else
-        raise HTTPUnspecifiedError
+        raise HTTPUnspecifiedError.new( "Received Response: #{response.inspect}" )
       end
     end
 
@@ -211,6 +217,9 @@ module Scraper
             html = tidy.clean(content)
             HTML::Document.new(html).find(:tag=>"html")
           end
+        when :nokogiri
+          html = Nokogiri::HTML::Document.parse( content, nil, encoding ).to_html
+          document = HTML::Document.new(html).find( :tag => "html" )
         when :html_parser
           document = HTML::HTMLParser.parse(content).root
         else

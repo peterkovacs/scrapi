@@ -4,7 +4,7 @@
 # Developed for http://co.mments.com
 # Code and documention: http://labnotes.org
 
-require "./lib/scrapi"
+require File.join(File.dirname(__FILE__), "../lib", "scrapi")
 
 
 class SelectorTest < Test::Unit::TestCase

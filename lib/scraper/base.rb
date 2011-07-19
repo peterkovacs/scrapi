@@ -921,10 +921,10 @@ module Scraper
     #   end
     def skip(elements = nil)
       case elements
-      when Array then @skip.concat elements
-      when HTML::Node then @skip << elements
-      when nil then @skip << true
-      when true, false then @skip << elements
+      when Array: @skip.concat elements
+      when HTML::Node: @skip << elements
+      when nil: @skip << true
+      when true, false: @skip << elements
       end
       # Calling skip(element) as the last statement is
       # redundant by design.

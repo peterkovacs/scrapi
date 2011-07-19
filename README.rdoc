@@ -40,22 +40,13 @@ To get the latest source code with regular updates:
 
 svn co http://labnotes.org/svn/public/ruby/scrapi
 
-== Version of Ruby
-
-ScrAPI 1.2.x tested with Ruby 1.8.6 and 1.8.7, but will not work on Ruby 1.9.x.
-
-ScrAPI 2.0.x switches to TidyFFI to runs on Ruby 1.9.2 and newer.
-
-Due to a bug in Ruby's visibility context handling (see changelog #29578 and bug
-#3406 on the official Ruby page), you need to declare all result attributes
-explicitly, using result method or attr_reader/_accessor.
 
 == Using TIDY
 
-By default scrAPI uses Tidy (actually Tidy-FFI) to cleanup the HTML.
+By default scrAPI uses Tidy to cleanup the HTML.
 
 You need to install the Tidy Gem for Ruby:
-  gem install tidy_ffi
+  gem install tidy
 
 And the Tidy binary libraries, available here:
 
@@ -65,15 +56,15 @@ By default scrAPI looks for the Tidy DLL (Windows) or shared library (Linux) in 
 
 Alternatively, just point Tidy to the library with:
 
-  TidyFFI.library_path = "...."
+  Tidy.path = "...."
 
 On Linux this would probably be:
 
-  TidyFFI.library_path = "/usr/local/lib/libtidy.so"
+  Tidy.path = "/usr/local/lib/libtidy.so"
 
 On OS/X this would probably be:
 
-  TidyFFI.library_path = “/usr/lib/libtidy.dylib”
+  Tidy.path = “/usr/lib/libtidy.dylib”
 
 For testing purposes, you can also use the built in HTML parser. It's useful for testing and getting up to grabs with scrAPI, but it doesn't deal well with broken HTML. So for testing only:
 
@@ -95,5 +86,3 @@ HTML DOM extracted from Rails, Copyright (c) 2004 David Heinemeier Hansson. Unde
 
 HTML parser by Takahiro Maebashi and Katsuyuki Komatsu, Ruby license.
 http://www.jin.gr.jp/~nahi/Ruby/html-parser/README.html
-
-Porting to Ruby 1.9.x by Christoph Lupprich, http://lupprich.info

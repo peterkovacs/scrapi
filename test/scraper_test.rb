@@ -8,8 +8,8 @@
 require "rubygems"
 require "time"
 require "test/unit"
-require "./test/mock_net_http"
-require "./lib/scrapi"
+require File.join(File.dirname(__FILE__), "mock_net_http")
+require File.join(File.dirname(__FILE__), "../lib", "scrapi")
 
 
 class ScraperTest < Test::Unit::TestCase
@@ -287,7 +287,6 @@ class ScraperTest < Test::Unit::TestCase
     scraper = new_scraper(html) do
       process "#1", :this1=>:text
       process "#1", :this2=>:text
-      attr_reader :this1, :this2
     end
     scraper.scrape
     assert_equal "this", scraper.this1
@@ -296,18 +295,16 @@ class ScraperTest < Test::Unit::TestCase
     scraper = new_scraper(html) do
       process "#1", :this1=>:text, :skip=>false
       process "#1", :this2=>:text
-      attr_reader :this1, :this2
     end
     scraper.scrape
     assert_equal "this", scraper.this1
     assert_equal "this", scraper.this2
 
     scraper = new_scraper(html) do
-      process "#1", :this1=>:text, :skip=>true do |element|
-        element
+      process "#1", :this1=>:text, :skip=>true do
+        false
       end
       process "#1", :this2=>:text
-      attr_reader :this1, :this2
     end
     scraper.scrape
     assert_equal "this", scraper.this1
@@ -354,7 +351,7 @@ class ScraperTest < Test::Unit::TestCase
         [response, <<-EOF
           <html>
             <head>
-              <meta http-equiv="content-type" value="text/html; charset=ASCII">
+              <meta http-equiv="content-type" value="text/html; charset=other-encoding">
             </head>
             <body>
               <div id="x"/>
@@ -374,7 +371,7 @@ class ScraperTest < Test::Unit::TestCase
     assert_equal "http://localhost/redirect", scraper.page_info.url.to_s
     assert_equal time, scraper.page_info.last_modified
     assert_equal "etag", scraper.page_info.etag
-    assert_equal "ASCII", scraper.page_info.encoding
+    assert_equal "other-encoding", scraper.page_info.encoding
   end
 
 
@@ -566,7 +563,6 @@ class ScraperTest < Test::Unit::TestCase
       process "h1", [:text, :kls]=>Scraper.define {
         process "*", :text=>:text, :kls=>"@class"
       }
-      attr_reader :text, :kls
     end
     result = scraper.scrape
     assert "first",   result.text
@@ -622,7 +618,6 @@ class ScraperTest < Test::Unit::TestCase
 
     scraper = new_scraper(DIVS_ST_ND) do
       process_first "div", :div_id=>"@id", :div_text=>:text
-      attr_reader :div_id, :div_text
     end
     value = scraper.scrape
     assert_equal "1",     value.div_id
@@ -726,7 +721,7 @@ class ScraperTest < Test::Unit::TestCase
     # Extracting the attribute skips the second match.
     scraper = new_scraper(DIVS123) do
       process("div") { |element| @count +=1 }
-      define_method(:prepare) { |element| @count = 1 }
+      define_method(:prepare) { @count = 1 }
       define_method(:result) { @count }
     end
     result = scraper.scrape

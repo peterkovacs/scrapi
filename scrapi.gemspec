@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name = 'scrapi'
-  spec.version = '1.2.1'
+  spec.version = '1.2.2'
   spec.summary = "scrAPI toolkit for Ruby. Uses CSS selectors to write easy, maintainable HTML scraping rules."
   spec.description = <<-EOF
 scrAPI is an HTML scraping toolkit for Ruby. It uses CSS selectors to write easy, maintainable scraping rules to select, extract and store data from HTML content.
